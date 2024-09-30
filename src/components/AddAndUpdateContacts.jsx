@@ -82,6 +82,7 @@ const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
              name='name'
              onChange={handleChange}
              value={formData.name}
+             autoFocus
              className='h-10 w-80 border p-2' />
              <p className='text-red-500 h-[15px]'>{errors.name}</p>
         </div>
