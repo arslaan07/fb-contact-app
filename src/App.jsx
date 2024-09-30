@@ -9,6 +9,10 @@ import { db } from './config/firebase'
 import useDisclouse from './hooks/useDisclouse';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Route, Routes } from 'react-router-dom';
+import Register from './components/auth/Register';
+import Login from './components/auth/Login';
+
 
 const App = () => {
   const [contacts, setContacts] = useState([])
@@ -40,10 +44,12 @@ const App = () => {
   }
   return (
     <>
-    <div >
+    <div>
       <Navbar/>
-      <Searchbar onOpen={onOpen} handleSearch={handleSearch}/>
-      <div className='mt-4'>
+      <Routes>
+        <Route path='/' element={<>
+          <Searchbar onOpen={onOpen} handleSearch={handleSearch}/>
+        <div className='mt-4'>
         {
           filteredContacts.length > 0 ? ( filteredContacts.map(c => (
             <ContactCard key={c.id} c={c}
@@ -52,6 +58,10 @@ const App = () => {
         }
         </div>
         <AddAndUpdateContacts isOpen={isOpen} onClose={onClose}/>
+        </>}/>
+        <Route path='/register' element={<Register />} />
+        <Route path='/login' element={<Login />} />
+        </Routes>
     </div>
     <ToastContainer position='bottom-center' />
     </>
