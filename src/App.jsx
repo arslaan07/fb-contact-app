@@ -18,6 +18,7 @@ const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclouse();
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
     const getContacts = async () => {
@@ -27,6 +28,8 @@ const App = () => {
             console.log("No user logged in");
             return;
           }
+          setIsAuthenticated(true)
+
           console.log("User is logged in", user.uid);
 
           // Listen for real-time changes on the user document
@@ -65,11 +68,15 @@ const App = () => {
     setFilteredContacts(filtered);
   };
 
+
+
   return (
     <>
       <div>
         <Navbar />
         <Routes>
+          {!isAuthenticated ? 
+          <Route path='/' element={<Navigate to="/login" />} /> :
           <Route path='/' element={<>
             <Searchbar onOpen={onOpen} handleSearch={handleSearch} />
             <div className='mt-4'>
@@ -81,7 +88,7 @@ const App = () => {
               ) : <NotFound />}
             </div>
             <AddAndUpdateContacts isOpen={isOpen} onClose={onClose} />
-          </>} />
+          </>} /> }
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
           <Route path='*' element={<PathNotFound />} />
