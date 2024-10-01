@@ -9,9 +9,10 @@ import { auth, db } from './config/firebase';
 import useDisclouse from './hooks/useDisclouse';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import PathNotFound from './components/PathNotFound';
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -69,6 +70,7 @@ const App = () => {
       <div>
         <Navbar />
         <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
           <Route path='/' element={<>
             <Searchbar onOpen={onOpen} handleSearch={handleSearch} />
             <div className='mt-4'>
@@ -83,6 +85,7 @@ const App = () => {
           </>} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
+          <Route path='*' element={<PathNotFound />} />
         </Routes>
       </div>
       <ToastContainer position='bottom-center' />
