@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { RiEditCircleLine } from "react-icons/ri";
 import { IoMdTrash } from "react-icons/io";
-import { doc, deleteDoc } from 'firebase/firestore'
-import { db } from '../config/firebase'
+import { doc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 import AddAndUpdateContacts from './AddAndUpdateContacts';
 import useDisclouse from '../hooks/useDisclouse';
 import { toast } from 'react-toastify';
@@ -16,6 +16,22 @@ const ContactCard = ({c}) => {
       await deleteDoc(contactRef)
       console.log("contact deleted successfully")
       toast.success("Contact Deleted Successfully")
+      auth.onAuthStateChanged(async user => {
+        if(!user) return
+        const userRef = doc(db, "users", user.uid)
+        const docSnap = await getDoc(userRef)
+        const contactsSnap = docSnap.data().contacts
+        const contactIdx = contactsSnap.indexOf(id)
+        if(contactIdx !== -1) {
+          contactsSnap.splice(contactIdx, 1)
+        }
+        await updateDoc(userRef, {
+          contacts: contactsSnap
+        })
+        console.log(docSnap.data())
+        console.log(contactsSnap)
+      })
+
     } catch (error) {
       console.log("error in deleting contact", error)
       toast.error("Error in Deleting Contact")
@@ -38,7 +54,7 @@ const ContactCard = ({c}) => {
               </div>
             </div>
             <AddAndUpdateContacts 
-            isUpdate 
+            isUpdate
             isOpen={isOpen}
              onClose={onClose}
              contact={c} />

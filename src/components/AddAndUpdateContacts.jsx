@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from './Modal'
-import { collection, addDoc, doc, updateDoc } from 'firebase/firestore'
-import { db } from '../config/firebase'
+import { collection, addDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 import { toast } from 'react-toastify'
 const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
-  const [formData, setFormData] = useState(
-    isUpdate ?
-    {
-      name: contact.name,
-      email: contact.email
-    } : 
-    {
+  const [formData, setFormData] = useState({
       name: "",
       email: ""
   })
   const [errors, setErrors] = useState({})
+  useEffect(() => {
+    if (isUpdate && contact && isOpen) {
+      setFormData({
+        name: contact.name || "",
+        email: contact.email || ""
+      });
+    }
+  }, [isOpen, isUpdate, contact]);
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prevData => ({
@@ -22,28 +24,46 @@ const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
       [name]: value
     }))
   }
+  const addContactToUser = async (contactId) => {
+    auth.onAuthStateChanged(async user => {
+      if(!user) {
+        console.log("No user is logged in")
+        return
+      }
+      console.log("user fetched", user.uid)
+      try {
+        const userRef = doc(db, "users", user.uid)
+        await updateDoc(userRef, {
+          contacts: arrayUnion(contactId)
+        })
+        console.log("Contact linked to user successfully");
+      } catch (error) {
+        console.error("Contact linking to user failed", error)
+      }
+    })
+  }
   const updateContact = async (contact) => {
     try {
       const contactRef = doc(db, "contacts", contact.id)
       await updateDoc(contactRef, formData)
       console.log("contact updated successfully")
       toast.success("Contact Updated Successfully")
+      addContactToUser(contact.id)
     } catch (error) {
       console.error(error)
-      toast.success("Error in Updating Contact")
+      toast.error("Error in Updating Contact")
 
     }
   }
   const addContact = async (contact) => {
     try {
       const contactsRef = collection(db, "contacts")
-      await addDoc(contactsRef, contact)
-      console.log("contact added successfully")
+      const addedContact = await addDoc(contactsRef, contact)
       toast.success("Contact Added Successfully")
+      addContactToUser(addedContact.id)
     } catch (error) {
       console.error(error)
-      toast.success("Error in Adding Contact")
-
+      toast.error("Error in Adding Contact")
     }
   }
   const handleSubmit = (e) => {
