@@ -70,7 +70,6 @@ const App = () => {
       <div>
         <Navbar />
         <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
           <Route path='/' element={<>
             <Searchbar onOpen={onOpen} handleSearch={handleSearch} />
             <div className='mt-4'>
