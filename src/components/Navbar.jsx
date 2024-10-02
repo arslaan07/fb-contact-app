@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { auth } from '../config/firebase'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
@@ -9,14 +9,17 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut()
+      document.cookie = `token=""; max-age=0; path=/;`
+      localStorage.setItem("isLoggedOut", "true")
       console.log("User logged out successfully")
       toast.success("User Logout Successfull !")
-      navigate("/login")
+      navigate("/")
     } catch (error) {
       console.error("User logout failed")
       toast.error(error.message)
     }
   }
+ 
   return (
     <div className='flex justify-between items-center px-2
     w-[361px] h-[60px] bg-white mx-auto rounded-lg text-xl

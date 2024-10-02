@@ -70,7 +70,7 @@ const Register = () => {
       </form>
       <div className='flex justify-end gap-2 text-sm font-medium'>
         <p className='text-zinc-500'>Already registered </p>
-        <Link to="/login" className='text-blue-600'>Login</Link>
+        <Link to="/" className='text-blue-600'>Login</Link>
       </div>
       
     </div>

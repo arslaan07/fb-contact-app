@@ -18,7 +18,7 @@ const App = () => {
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclouse();
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState()
 
   useEffect(() => {
     const getContacts = async () => {
@@ -28,8 +28,6 @@ const App = () => {
             console.log("No user logged in");
             return;
           }
-          setIsAuthenticated(true)
-
           console.log("User is logged in", user.uid);
 
           // Listen for real-time changes on the user document
@@ -53,7 +51,11 @@ const App = () => {
               setFilteredContacts(userContacts);
             });
           });
+          let token = await user.getIdToken(true)
+          document.cookie = `token=${token}; path=/`
+          
         });
+
       } catch (error) {
         console.log("Error fetching contacts", error);
       }
@@ -67,17 +69,34 @@ const App = () => {
       c.name.toLowerCase().includes(e.target.value.toLowerCase()));
     setFilteredContacts(filtered);
   };
-
-
+  useEffect(() => {
+    const handleStorageChange = e => {
+      if(e.key === "isLoggedOut" && e.newValue === "true") {
+        console.log("Detect logout from another tab")
+        auth.signOut()
+      }
+    }
+    window.addEventListener("storage", handleStorageChange)
+    return () => {
+      window.removeEventListener("storage", handleStorageChange)
+    }
+  }, [])
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setUser(user)  // This will set user to null when logged out
+    })
+    
+    // Cleanup function to unsubscribe when component unmounts
+    return () => unsubscribe()
+  }, []) // Empty dependency array
+ 
 
   return (
     <>
       <div>
         <Navbar />
         <Routes>
-          {!isAuthenticated ? 
-          <Route path='/' element={<Navigate to="/login" />} /> :
-          <Route path='/' element={<>
+          <Route path='/home' element={!user? <Navigate to="/" /> :<>
             <Searchbar onOpen={onOpen} handleSearch={handleSearch} />
             <div className='mt-4'>
               {filteredContacts.length > 0 ? (
@@ -88,11 +107,13 @@ const App = () => {
               ) : <NotFound />}
             </div>
             <AddAndUpdateContacts isOpen={isOpen} onClose={onClose} />
-          </>} /> }
-          <Route path='/register' element={<Register />} />
-          <Route path='/login' element={<Login />} />
+          </>} /> 
+          <Route path='/register' element={user? <Navigate to="/home" /> : <Register />} />
+          <Route path='/' 
+          element={user? <Navigate to="/home" /> : <Login />} />
           <Route path='*' element={<PathNotFound />} />
         </Routes>
+        
       </div>
       <ToastContainer position='bottom-center' />
     </>
