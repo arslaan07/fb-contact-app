@@ -45,7 +45,9 @@ const App = () => {
                 id: contact.id
               }));
               const userContacts = contactsList.filter(contact => contactIds.includes(contact.id));
-
+              userContacts.sort(function(a, b) {
+                return a.name.localeCompare(b.name)
+              })
               console.log("User contacts:", userContacts);
               setContacts(userContacts);
               setFilteredContacts(userContacts);
