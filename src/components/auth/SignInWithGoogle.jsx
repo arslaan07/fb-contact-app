@@ -21,7 +21,7 @@ const SignInWithGoogle = () => {
                 }
                 const userRef = doc(db, "users", result.user.uid)
                 await setDoc(userRef, userData)
-                navigate("/home")
+                navigate("/contacts")
             }
         })
         .catch((error) => {

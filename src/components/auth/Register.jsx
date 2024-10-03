@@ -36,7 +36,7 @@ const Register = () => {
       const userRef = doc(db, "users", user.uid)
       await setDoc(userRef, userData)
      toast.success("User Registration Successfull !")
-     navigate("/login")
+     navigate("/")
     } catch (error) {
       console.error("Error registering the user", error)
       toast.error(error.message)

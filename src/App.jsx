@@ -98,7 +98,7 @@ const App = () => {
       <div>
         <Navbar />
         <Routes>
-          <Route path='/home' element={!user? <Navigate to="/" /> :<>
+          <Route path='/contacts' element={!user? <Navigate to="/" /> :<>
             <Searchbar onOpen={onOpen} handleSearch={handleSearch} />
             <div className='mt-4'>
               {filteredContacts.length > 0 ? (
@@ -110,9 +110,9 @@ const App = () => {
             </div>
             <AddAndUpdateContacts isOpen={isOpen} onClose={onClose} />
           </>} /> 
-          <Route path='/register' element={user? <Navigate to="/home" /> : <Register />} />
+          <Route path='/register' element={user? <Navigate to="/contacts" /> : <Register />} />
           <Route path='/' 
-          element={user? <Navigate to="/home" /> : <Login />} />
+          element={user? <Navigate to="/contacts" /> : <Login />} />
           <Route path='*' element={<PathNotFound />} />
         </Routes>
         

@@ -28,7 +28,7 @@ const Login = () => {
       if(!user) return
       console.log("User signed in succesfully")
       toast.success("User Login Successfull !")
-      navigate("/home")
+      navigate("/contacts")
     } catch (error) {
       console.error(error)
       toast.error(error.message)
