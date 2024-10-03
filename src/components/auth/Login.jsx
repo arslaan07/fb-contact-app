@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { auth } from '../../config/firebase'
+import SignInWithGoogle from './SignInWithGoogle'
 
 const Login = () => {
   const [loginFormData, setLoginFormData] = useState({
@@ -58,7 +59,7 @@ const Login = () => {
         <p className='text-zinc-500'>New user </p>
         <Link to="/register" className='text-blue-600'>Register Here</Link>
       </div>
-      
+      <SignInWithGoogle />
     </div>
   )
 }

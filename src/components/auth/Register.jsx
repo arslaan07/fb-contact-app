@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { auth, db } from '../../config/firebase'
 import { setDoc, doc } from 'firebase/firestore'
 import { toast } from 'react-toastify'
+import SignInWithGoogle from './SignInWithGoogle'
 
 const Register = () => {
   const [registerFormData, setRegisterFormData] = useState({
@@ -72,7 +73,7 @@ const Register = () => {
         <p className='text-zinc-500'>Already registered </p>
         <Link to="/" className='text-blue-600'>Login</Link>
       </div>
-      
+      <SignInWithGoogle />
     </div>
   )
 }
