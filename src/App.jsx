@@ -13,6 +13,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import PathNotFound from './components/PathNotFound';
+import { getAdditionalUserInfo } from 'firebase/auth';
 
 const App = () => {
   const [contacts, setContacts] = useState([]);
@@ -91,7 +92,6 @@ const App = () => {
     // Cleanup function to unsubscribe when component unmounts
     return () => unsubscribe()
   }, []) // Empty dependency array
- 
 
   return (
     <>

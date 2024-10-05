@@ -1,9 +1,9 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAdditionalUserInfo, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import React from 'react'
 import { auth, db } from '../../config/firebase'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 const SignInWithGoogle = () => {
     const navigate = useNavigate()
@@ -14,13 +14,20 @@ const SignInWithGoogle = () => {
             if(result) {
                 console.log("User sign in successfull")
                 toast.success("User Sign in Successfull !")
-                const { displayName, email } = result.user
+                const { displayName, email, uid } = result.user
                 const userData = {
                     name: displayName,
                     email
                 }
-                const userRef = doc(db, "users", result.user.uid)
-                await setDoc(userRef, userData)
+                const userRef = doc(db, "users", uid)
+                const userDoc = await getDoc(userRef)
+                if(!userDoc.exists()) {
+                  await setDoc(userRef, userData)
+                  console.log("New user document created")
+                } else {
+                  console.log("User document already exists")
+                }
+                
                 navigate("/contacts")
             }
         })

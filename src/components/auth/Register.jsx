@@ -1,5 +1,5 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import React, { Children, useState } from 'react'
+import { createUserWithEmailAndPassword, getAdditionalUserInfo, signOut } from 'firebase/auth'
+import React, { Children, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { auth, db } from '../../config/firebase'
 import { setDoc, doc } from 'firebase/firestore'
@@ -12,6 +12,7 @@ const Register = () => {
     email: "",
     password: ""
   })
+  
   const navigate = useNavigate()
   const handleChange = e => {
     const { name, value } = e.target
@@ -26,8 +27,6 @@ const Register = () => {
     try {
      await createUserWithEmailAndPassword(auth, email, password)
      const user = auth.currentUser
-     console.log(user)
-     console.log("User Registered Successfully")
      const userData = {
       name: name,
       email: user.email
@@ -36,12 +35,13 @@ const Register = () => {
       const userRef = doc(db, "users", user.uid)
       await setDoc(userRef, userData)
      toast.success("User Registration Successfull !")
-     navigate("/")
+     navigate("/contacts")
     } catch (error) {
       console.error("Error registering the user", error)
       toast.error(error.message)
     }
   }
+ 
   return (
     <div className='w-[361px] min-h-[200px] mx-auto bg-white p-2
     rounded-md '>

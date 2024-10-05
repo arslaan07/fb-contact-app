@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { HiOutlineUserCircle } from "react-icons/hi";
 import { RiEditCircleLine } from "react-icons/ri";
 import { IoMdTrash } from "react-icons/io";
-import { doc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, deleteDoc, getDoc, updateDoc, arrayRemove } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 import AddAndUpdateContacts from './AddAndUpdateContacts';
 import useDisclouse from '../hooks/useDisclouse';
@@ -17,19 +17,11 @@ const ContactCard = ({c}) => {
       console.log("contact deleted successfully")
       toast.success("Contact Deleted Successfully")
       auth.onAuthStateChanged(async user => {
-        if(!user) return
         const userRef = doc(db, "users", user.uid)
-        const docSnap = await getDoc(userRef)
-        const contactsSnap = docSnap.data().contacts
-        const contactIdx = contactsSnap.indexOf(id)
-        if(contactIdx !== -1) {
-          contactsSnap.splice(contactIdx, 1)
-        }
         await updateDoc(userRef, {
-          contacts: contactsSnap
+          contacts: arrayRemove(id)
         })
-        console.log(docSnap.data())
-        console.log(contactsSnap)
+       console.log("contact unlinked from user successfully")
       })
 
     } catch (error) {

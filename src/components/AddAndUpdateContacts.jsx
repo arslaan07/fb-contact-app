@@ -3,6 +3,7 @@ import Modal from './Modal'
 import { collection, addDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 import { toast } from 'react-toastify'
+import { Container } from 'postcss'
 const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
   const [formData, setFormData] = useState({
       name: "",
@@ -24,13 +25,15 @@ const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
       [name]: value
     }))
   }
+  
   const addContactToUser = async (contactId) => {
-    auth.onAuthStateChanged(async user => {
+  //  const unsubscribe =  auth.onAuthStateChanged(async user => {
+    let user = auth.currentUser
       if(!user) {
         console.log("No user is logged in")
         return
       }
-      console.log("user fetched", user.uid)
+      console.log("user fetched", user)
       try {
         const userRef = doc(db, "users", user.uid)
         await updateDoc(userRef, {
@@ -40,8 +43,10 @@ const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
       } catch (error) {
         console.error("Contact linking to user failed", error)
       }
-    })
-  }
+    }
+  // }
+    // return () => unsubscribe
+  // }
   const updateContact = async (contact) => {
     try {
       const contactRef = doc(db, "contacts", contact.id)
@@ -68,6 +73,7 @@ const AddAndUpdateContacts = ({isOpen, onClose, isUpdate, contact}) => {
   }
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log("form data: ", formData)
     let errors = {}
     if(formData.name.trim() === '') {
       errors.name = 'Name is required'
